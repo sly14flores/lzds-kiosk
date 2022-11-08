@@ -1,0 +1,22 @@
+{
+  "name": "sms-gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "devices": "node devices.js"
+  },
+  "author": "Sly Flores",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/webhook": "^6.1.0",
+    "dotenv": "^16.0.3",
+    "serialport-gsm": "^3.4.1"
+  },
+  "engines": {
+    "npm": "16.14.4",
+    "node": "12.16.3"
+  }
+}
