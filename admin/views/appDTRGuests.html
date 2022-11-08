@@ -1,0 +1,18 @@
+<div class="panel panel-default">
+  <div class="panel-heading">Guests DTR</div>
+  <div class="panel-body">				  
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Date</th><th>Day</th><th>Guest</th><th>Log Time</th><th>Name</th><th>Purpose</th><th>Remarks</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr dir-paginate="result in results | filter: q | itemsPerPage: pageSize" current-page="currentPage">
+				<td>{{result['date']}}</td><td>{{result['day']}}</td><td>{{result['guest']}}</td><td>{{result['logtime']}}</td><td>{{result['guest_name']}}</td><td>{{result['guest_purpose']}}</td><td></td>
+			</tr>
+		</tbody>
+	</table>
+	<dir-pagination-controls template-url="angularjs/utils/pagination/dirPagination.tpl.html"></dir-pagination-controls>	
+  </div>
+</div>

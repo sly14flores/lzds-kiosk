@@ -1,0 +1,20 @@
+<form name="views.frmGuestPurposes" id="frmGuestPurposes" class="form-inline">
+  <div ng-class="{'form-group': true, 'has-error': views.purposeInvalid}">
+    <label>Description</label>
+    <input type="text" class="form-control" name="purpose" ng-model="views.purpose" required>
+  </div>
+  <button type="button" class="btn btn-primary" ng-click="addGuestPurpose()">Add</button>
+	<p class="help-block" ng-show="views.purposeInvalid">Please enter purpose description</p>  
+</form>
+<table id="tabFrmGuestPurposes" class="table table-bordered">
+	<thead>
+		<tr><th>#</th><th>Description</th><th>Action</th></tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="purpose in purposes">
+			<td>{{$index+1}}</td>
+			<td ng-class="{'form-group': true, 'has-error': purpose.invalid}"><input type="text" class="form-control" name="description" ng-disabled="purpose.disabled" ng-model="purpose.description"></td>
+			<td style="text-align: center;"><i ng-class="{'glyphicon': true, 'glyphicon-pencil': purpose.disabled, 'glyphicon-ok': !purpose.disabled}" aria-hidden="true" ng-click="enableEditPurpose(purpose)"></i><i class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="deleteGuestPurpose(purpose)"></i></td>
+		</tr>
+	</tbody>
+</table>

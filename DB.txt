@@ -1,0 +1,3 @@
+ALTER TABLE `profiles`  ADD `gender` VARCHAR(10) NOT NULL AFTER `middle_name`
+
+ALTER TABLE `profiles` CHANGE `gender` `gender` VARCHAR(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL

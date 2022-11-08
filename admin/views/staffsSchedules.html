@@ -1,0 +1,17 @@
+<div class="form-group">
+	<label>Description</label>
+	<input type="text" class="form-control" name="purpose" placeholder="Search">
+</div>
+<button type="button" class="btn btn-primary" ng-click="staffsSchedules.schedule()">Add</button>
+<hr>
+<table id="tabFrmSchedules" class="table table-striped">
+<thead>
+<tr><th>Id</th><th>Description</th><th>Tools</th></tr>
+</thead>
+<tbody>
+<tr ng-repeat="schedule_row in schedules">
+<td>{{schedule_row.id}}</td><td>{{schedule_row.description}}</td>
+<td><i class="glyphicon glyphicon-pencil" aria-hidden="true" ng-click="staffsSchedules.edit(schedule_row)"></i><i class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="staffsSchedules.del(schedule_row)"></i></td>
+</tr>
+</tbody>
+</table>

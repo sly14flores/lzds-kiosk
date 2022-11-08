@@ -1,0 +1,50 @@
+.ace-settings-container {
+    position: absolute;
+    right: 0;
+    top: 10%;
+    z-index: 12;
+	background-color: transparent;
+}
+
+.btn.btn-app.ace-settings-btn {
+    float: left;
+    display: block;
+    text-align: center;
+    border-radius: 6px 0 0 6px;
+    vertical-align: top;
+    margin: 0;
+}
+
+.ace-settings-box {
+    display: block;
+    float: left;
+    max-width: 0;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+    transform: translate(0,0);
+    background-color: #FFF;
+    border: 0 solid #337AB7;
+    transition: max-width .75s linear 0s,max-height 0s linear .75s,padding 0s linear .75s,border-width 0s linear .75s;
+}
+
+.ace-settings-box.open {
+    max-width: 320px;
+    max-height: 1000px;
+    padding: 0 14px;
+    border-width: 2px;
+    transition-delay: 0s;
+}
+
+.btn.btn-app.ace-settings-btn:hover, .btn.btn-app.ace-settings-btn.open {
+    opacity: 1;
+}
+
+.dtr-report {
+	padding: 10px 10px 20px 10px;
+	width: 216px;
+}
+
+.dtr-report form {
+	overflow: hidden;
+}

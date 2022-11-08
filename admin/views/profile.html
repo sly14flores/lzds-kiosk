@@ -1,0 +1,191 @@
+<ol class="breadcrumb">
+  <li><a href="javascript:;" ng-click="profileList()">Profiles</a></li>
+  <li class="active">{{view.mode}} Profile</li>
+</ol>
+<div class="row">
+	<div class="col-lg-12">
+	
+	  <ul class="nav nav-tabs" role="tablist">
+		<li role="presentation" class="active"><a href="#basic_info" aria-controls="basic_info" role="tab" data-toggle="tab">Basic Info</a></li>
+		<li role="presentation" ng-show="profile.profile_type != undefined && profile.profile_type == 'Staff'"><a href="#account_info" aria-controls="account_info" role="tab" data-toggle="tab">Account Info</a></li>
+	  </ul>
+	  <div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="basic_info">
+		
+		<div class="panel panel-default" style="margin-top: 10px;">
+		  <div class="panel-body">
+			<form name="frmHolder.frmProfile" id="frmHolder.frmProfile" novalidate autocomplete=off>
+				<div class="row">
+					<div class="col-lg-4">
+					  <div class="form-group">
+						<div><img src="{{view.profilePicture}}" class="img-responsive img-thumbnail" alt="Profile Picture"></div>
+						<div class="progress" ng-show="uploadingFile">
+						<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%;">{{progress}}%</div>
+						</div>			  
+						<label>Profile Picture</label>
+						<input type="file" name="proPic" id="proPic" file-model="view.proPic">
+						<button type="button" class="btn btn-default" ng-click="uploadFile()">Upload</button>
+					  </div>				
+					</div>			
+				</div>
+				<div class="row">
+					<div class="col-lg-4">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmProfile.profile_type.$invalid && frmHolder.frmProfile.profile_type.$touched}">
+						<label>Type</label>
+						<select class="form-control" name="profile_type" ng-change="profileTypeChange()" ng-model="profile.profile_type" ng-options="x for (x,y) in profileTypes track by y" required>
+							<option value="">Select One</option>
+						</select>
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmProfile.profile_type.$invalid && frmHolder.frmProfile.profile_type.$touched" style="margin-top: 5px;">Please select profile type</div>
+					  </div>			
+					</div>				
+				</div>
+				<div class="row">
+					<div class="col-lg-4">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmProfile.school_year.$invalid && frmHolder.frmProfile.school_year.$touched}">
+						<label>School Year</label>
+						<select class="form-control" name="school_year" ng-model="profile.school_year" ng-options="_sy.school_year for _sy in _school_years track by _sy.id" ng-required="profile.profile_type != undefined && profile.profile_type == 'Student'"></select>
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmProfile.school_year.$invalid && frmHolder.frmProfile.school_year.$touched" style="margin-top: 5px;">Please select school year</div>
+					  </div>			
+					</div>
+					<div class="col-lg-4">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmProfile.school_id.$invalid && frmHolder.frmProfile.school_id.$touched}">
+						<label>School ID</label>
+						<input type="text" class="form-control" name="school_id" ng-model="profile.school_id" uib-typeahead="fid as fid.enrollee_fid for fid in fids | filter:{enrollee_fid:$viewValue}" typeahead-on-select="idSelected($item, $model, $label, $event)" typeahead-loading="loadingFids" ng-required="profile.profile_type != undefined && profile.profile_type != 'Guest'">
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmProfile.school_id.$invalid && frmHolder.frmProfile.school_id.$touched" style="margin-top: 5px;">Please enter School ID</div>						
+						<div class="progress" ng-show="loadingFids">
+						  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+							<span class="">Fetching Students IDs</span>
+						  </div>
+						</div>
+					  </div>				
+					</div>
+					<div class="col-lg-4">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmProfile.rfid.$invalid && frmHolder.frmProfile.rfid.$touched}">
+						<label>RFID</label>
+						<input type="text" class="form-control" name="rfid" id="rfid" ng-model="profile.rfid" ng-required="profile.profile_type != undefined">
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmProfile.rfid.$invalid && frmHolder.frmProfile.rfid.$touched" style="margin-top: 5px;">Please enter RFID</div>			
+					  </div>				
+					</div>				
+				</div>
+				<div class="row">
+					<div class="col-lg-4">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmProfile.last_name.$invalid && frmHolder.frmProfile.last_name.$touched}">
+						<label>Last Name</label>
+						<input type="text" class="form-control" name="last_name" ng-model="profile.last_name" ng-required="profile.profile_type != undefined && profile.profile_type != 'Guest'">
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmProfile.last_name.$invalid && frmHolder.frmProfile.last_name.$touched" style="margin-top: 5px;">Please enter last name</div>
+					  </div>				
+					</div>
+					<div class="col-lg-4">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmProfile.first_name.$invalid && frmHolder.frmProfile.first_name.$touched}">
+						<label>First Name</label>
+						<input type="text" class="form-control" name="first_name" ng-model="profile.first_name" ng-required="profile.profile_type != undefined">
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmProfile.first_name.$invalid && frmHolder.frmProfile.first_name.$touched" style="margin-top: 5px;">Please enter first name</div>			
+					  </div>				
+					</div>
+					<div class="col-lg-4">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmProfile.middle_name.$invalid && frmHolder.frmProfile.middle_name.$touched}">
+						<label>Middle Name</label>
+						<input type="text" class="form-control" name="middle_name" ng-model="profile.middle_name" ng-required="profile.profile_type != undefined && profile.profile_type != 'Guest'">
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmProfile.middle_name.$invalid && frmHolder.frmProfile.middle_name.$touched" style="margin-top: 5px;">Please enter middle name</div>
+					  </div>				
+					</div>				
+				</div>
+				<div class="row">
+					<div class="col-lg-4">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmProfile.gender.$invalid && frmHolder.frmProfile.gender.$touched}">
+						<label>Gender</label>
+						<select class="form-control" name="gender" ng-model="profile.gender" ng-required="profile.profile_type != undefined && profile.profile_type != 'Guest'">
+							<option value="">Select One</option>
+							<option value="Male">Male</option>
+							<option value="Female">Female</option>
+						</select>
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmProfile.gender.$invalid && frmHolder.frmProfile.gender.$touched" style="margin-top: 5px;">Please select gender</div>			
+					  </div>				
+					</div>
+					<div class="col-lg-4">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmProfile.level.$invalid && frmHolder.frmProfile.level.$touched}">
+						<label>Level</label>
+						<select class="form-control" name="level" ng-model="profile.level" ng-options="x for (x, y) in studentLevels track by y" ng-required="profile.profile_type != undefined && profile.profile_type == 'Student'">
+							<option value="">Select One</option>
+						</select>
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmProfile.level.$invalid && frmHolder.frmProfile.level.$touched" style="margin-top: 5px;">Please select level</div>			
+					  </div>				
+					</div>
+					<div class="col-lg-4">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmProfile.section.$invalid && frmHolder.frmProfile.section.$touched}">
+						<label>Section</label>
+						<select class="form-control" name="section" ng-model="profile.section" ng-options="x for (x, y) in studentSections track by y" ng-required="profile.profile_type != undefined && profile.profile_type == 'Student'">
+							<option value="">Select One</option>
+						</select>
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmProfile.section.$invalid && frmHolder.frmProfile.section.$touched" style="margin-top: 5px;">Please select section</div>			
+					  </div>				
+					</div>				
+				</div>
+				<div class="row">
+					<div class="col-lg-4">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmProfile.cp.$invalid && frmHolder.frmProfile.cp.$touched}">
+						<label>Contact Number</label>
+						<input type="text" class="form-control" name="cp" ng-model="profile.cp" ng-required="profile.profile_type != undefined && profile.profile_type == 'Student'">
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmProfile.cp.$invalid && frmHolder.frmProfile.cp.$touched" style="margin-top: 5px;">Please enter contact number</div>
+					  </div>				
+					</div>
+					<div class="col-lg-4">
+					  <div class="form-group">
+						<label>Schedule</label>
+						<input type="text" class="form-control" name="schedule" ng-model="profile.schedule">
+					  </div>		
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-12">
+					  <div class="form-group pull-right">
+						  <button type="button" class="btn btn-primary" ng-click="confirmProfileAction()">{{buttons.titles.ok}}</button>
+					  </div>				
+					</div>
+				</div>
+			</form>		  		  
+		  </div>
+		</div>		
+			
+		</div>
+		<div role="tabpanel" class="tab-pane" id="account_info" ng-show="profile.profile_type != undefined && profile.profile_type == 'Staff'">
+		
+		<div class="panel panel-default" style="margin-top: 10px;">
+		  <div class="panel-body">
+			<form name="frmHolder.frmAccount" id="frmHolder.frmAccount" novalidate autocomplete=off>
+				<div class="row">
+					<div class="col-lg-6">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmAccount.username.$invalid && frmHolder.frmAccount.username.$touched}">
+						<label>Username</label>
+						<input type="text" class="form-control" name="username" ng-model="account.username" required>
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmAccount.username.$invalid && frmHolder.frmAccount.username.$touched" style="margin-top: 5px;">Please enter username</div>
+					  </div>				
+					</div>
+					<div class="col-lg-6">
+					  <div class="form-group" ng-class="{'has-error': frmHolder.frmAccount.password.$invalid && frmHolder.frmAccount.password.$touched}">
+						<label>Password</label>
+						<input type="password" class="form-control" name="password" ng-model="account.password" required>
+						<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmAccount.password.$invalid && frmHolder.frmAccount.password.$touched" style="margin-top: 5px;">Please enter password</div>
+					  </div>		
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-12">
+					  <div class="form-group pull-right">
+						  <button type="button" class="btn btn-primary" ng-click="confirmAccountAction()">{{buttons.titles.ok}}</button>
+					  </div>				
+					</div>
+				</div>
+			</form>		  		  
+		  </div>
+		</div>
+		
+		</div>
+	  </div>
+	  
+<div class="form-group pull-right">
+	<button type="button" class="btn btn-default" ng-click="cancelProfile()">{{buttons.titles.cancel}}</button>
+</div>
+		
+	</div>
+</div>

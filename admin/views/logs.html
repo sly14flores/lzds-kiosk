@@ -1,0 +1,25 @@
+<div class="staff-logs">
+	<p>{{views.profile_type}}: <strong>{{filter.fullname}}</strong></p>
+	<p>Date: <strong>{{views.logDate}}</strong></p>
+	<hr>
+	<form class="form-inline">
+	  <div class="form-group" ng-class="{'has-error': views.noTimeLog}">
+		<label>Time Log:</label>
+		<input type="text" class="form-control" placeholder="00:00:00" ng-model="views.time_log">
+	  </div>
+	  <button type="button" class="btn btn-primary" ng-click="addTimeLog()">Add</button>
+	</form>
+	<table class="table table-bordered">
+	<thead><tr><th>#</th><th>Log</th><th>Order</th><th></th></tr></thead>
+	<tbody ng-sortable="sortableConfig">
+		<tr ng-repeat="log in logs">
+			<td>{{$index+1}}</td>
+			<td class="form-group" ng-class="{'has-error': log.invalid}"><input type="text" class="form-control" ng-model="log.time_log" ng-disabled="log.disabled"></td>
+			<td>
+				<select class="form-control" ng-model="log.log_order" ng-options="x for (x,y) in logOrders track by y" ng-change="changeOrder(log)"></select>
+			</td>
+			<td style="text-align: center;"><i class="glyphicon" ng-class="{'glyphicon-pencil': log.disabled, 'glyphicon-ok': !log.disabled}" ng-click="editSaveLog(log)" aria-hidden="true"></i>&nbsp;&nbsp;<i class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="delTimeLog(log)"></i></td>
+		</tr>
+	</tbody>
+	</table>
+</div>
