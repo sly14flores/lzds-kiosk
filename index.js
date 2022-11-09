@@ -1,4 +1,47 @@
 require('dotenv').config();
+
+const DB_PASSWORD = process.env.DB_PASSWORD
+
+const mysql = require('mysql');
+
+const con = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'root',
+  password : DB_PASSWORD,
+  database : 'monitoring'
+});
+
+con.connect((err) => {
+  if (err) throw err;
+  console.log("Connected to database!");
+
+  const sql = `SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE sms = 'queue' AND profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '2022-10-28'`
+
+  con.query(sql, (err, result) => {
+
+    if (err) throw err;
+    
+    /**
+     * {
+     * 	"id":500387,
+     * 	"rfid":"0004528331",
+     * 	"fullname":"Jenacia G. Sobremonte",
+     * 	"time_log":"2022-10-28 05:10:03",
+     *  "cp":"9100098008",
+     *  "log_date":"Fri, Oct 28, 2022",
+     *  "log_time":"05:10 AM",
+     *  "logQ_date":"2022-10-28"
+     * }
+     */
+    result.forEach((item,index) => {
+      console.log(item.log_date)
+    })
+
+  });
+})
+
+return
+
 const serialportgsm = require('serialport-gsm');
 const { IncomingWebhook } = require('@slack/webhook');
 
@@ -186,6 +229,7 @@ gsmModem.on('open', () => {
 });
 
 // gsmModem.open('/dev/ttyUSB0', options);
+
 gsmModem.open(device, options);
 
 // setTimeout(() => {
