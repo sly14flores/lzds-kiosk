@@ -98,6 +98,18 @@ var server = app.listen(8080, function () {
 
 });
 
+/**
+ * {
+ * 	"id":500387,
+ * 	"rfid":"0004528331",
+ * 	"fullname":"Jenacia G. Sobremonte",
+ * 	"time_log":"2022-10-28 05:10:03",
+ *  "cp":"9100098008",
+ *  "log_date":"Fri, Oct 28, 2022",
+ *  "log_time":"05:10 AM",
+ *  "logQ_date":"2022-10-28"
+ * }
+ */
 
 /* modem.open('/dev/ttyUSB0', function() {
 	
