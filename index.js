@@ -74,7 +74,7 @@ const init = (con,gsmModem) => {
           if (result.data.response && result.data.response === 'Message Successfully Sent') {
             (async () => {
               await logSmsSuccess.send({
-                text: message,
+                text: msg,
               });
             })();
             updateSent(con,aid)
