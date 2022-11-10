@@ -17,9 +17,9 @@ con.connect((err) => {
   if (err) throw err;
   console.log("Connected to database!");
 
-  const sql = `SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE sms = 'queue' AND profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '${now}'`
+  const queryLogs = `SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE sms = 'queue' AND profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '${now}'`
 
-  con.query(sql, (err, result) => {
+  con.query(queryLogs, (err, result) => {
 
     if (err) throw err;
     
@@ -38,14 +38,26 @@ con.connect((err) => {
     result.forEach((item,index) => {
 
       const aid = item.id
-      // const cp = '09179245040'
-      const cp = item.cp
-      const rfid = req.body['rfid'];
-      const fullname = req.body['fullname'];
-      const log_date = req.body['log_date'];
-      const logQ_date = req.body['logQ_date'];
-      const log_time = req.body['log_time'];
-      console.log(item.log_date)
+      // const cp = item.cp
+      const cp = '09179245040'
+      const rfid = item.rfid
+      const fullname = item.fullname
+      const log_date = item.log_date
+      const logQ_date = item.logQ_date
+      const log_time = item.log_time
+
+      const studentIn = 'FROM: Lord of Zion Divine School. Good day. Dear parent/guardian, Your child '+fullname+' has entered the school premises on '+log_date+' at '+log_time+'. Wishing you a great day ahead. Thank you.';
+      const studentOut = 'FROM: Lord of Zion Divine School. Great day. Dear parent/guardian, Your child '+fullname+' has left the campus on '+log_date+' at '+log_time+'. Enjoy the rest of the day. God bless.';	
+
+      const queryStudent = 'SELECT id, @c:=@c+1 AS i FROM attendances, (SELECT @c:=0) c WHERE SUBSTRING(time_log,1,10) = ? AND rfid = ? AND id = ?'
+
+      con.query(queryStudent, [logQ_date,rfid,aid], (err,result) => {
+
+        if (err) throw err;
+
+        console.log(result)
+
+      })
 
     })
 
