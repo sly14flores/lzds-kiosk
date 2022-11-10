@@ -2,7 +2,6 @@ require('dotenv').config();
 const moment = require('moment');
 
 const DB_PASSWORD = process.env.DB_PASSWORD
-const now = moment().format("YYYY-MM-DD")
 
 const mysql = require('mysql');
 
@@ -13,16 +12,25 @@ const con = mysql.createConnection({
   database : 'monitoring'
 });
 
-con.connect((err) => {
-  if (err) throw err;
-  console.log("Connected to database!");
+const updateSent = (con,aid) => {
 
-  const queryLogs = `SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE sms = 'queue' AND profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '${now}'`
+  con.query('UPDATE attendances SET sms = ? WHERE id = ?', ['sent',aid], function(err,result) {
+    if(err) throw err;
+  });	
 
-  con.query(queryLogs, (err, result) => {
+}
 
-    if (err) throw err;
-    
+const init = (con,gsmModem) => {
+
+  console.log('Initialising sending of sms')
+
+  const now = moment().format("YYYY-MM-DD")
+  let i = 0
+
+  const smsNotify = (results,index,size) => {
+
+    const item = results[index]
+
     /**
      * {
      * 	"id":500387,
@@ -35,36 +43,77 @@ con.connect((err) => {
      *  "logQ_date":"2022-10-28"
      * }
      */
-    result.forEach((item,index) => {
+    const aid = item.id
+    // const cp = item.cp
+    const cp = '09179245040'
+    const rfid = item.rfid
+    const fullname = item.fullname
+    const log_date = item.log_date
+    const logQ_date = item.logQ_date
+    const log_time = item.log_time
 
-      const aid = item.id
-      // const cp = item.cp
-      const cp = '09179245040'
-      const rfid = item.rfid
-      const fullname = item.fullname
-      const log_date = item.log_date
-      const logQ_date = item.logQ_date
-      const log_time = item.log_time
+    const studentIn = `FROM: Lord of Zion Divine School. Good day. Dear parent/guardian, Your child ${fullname} has entered the school premises on ${log_date} at ${log_time} Wishing you a great day ahead. Thank you.`
+    const studentOut = `FROM: Lord of Zion Divine School. Great day. Dear parent/guardian, Your child ${fullname} has left the campus on ${log_date} at ${log_time} Enjoy the rest of the day. God bless.`
 
-      const studentIn = 'FROM: Lord of Zion Divine School. Good day. Dear parent/guardian, Your child '+fullname+' has entered the school premises on '+log_date+' at '+log_time+'. Wishing you a great day ahead. Thank you.';
-      const studentOut = 'FROM: Lord of Zion Divine School. Great day. Dear parent/guardian, Your child '+fullname+' has left the campus on '+log_date+' at '+log_time+'. Enjoy the rest of the day. God bless.';	
+    const queryStudent = 'SELECT id, @c:=@c+1 AS i FROM attendances, (SELECT @c:=0) c WHERE SUBSTRING(time_log,1,10) = ? AND rfid = ? AND id = ?'
 
-      const queryStudent = 'SELECT id, @c:=@c+1 AS i FROM attendances, (SELECT @c:=0) c WHERE SUBSTRING(time_log,1,10) = ? AND rfid = ? AND id = ?'
+    con.query(queryStudent, [logQ_date,rfid,aid], (err,result) => {
 
-      con.query(queryStudent, [logQ_date,rfid,aid], (err,result) => {
+      if (err) throw err;
 
-        if (err) throw err;
+      if (result.length>0) {
+        const key = result[0].i
 
-        console.log(result)
+        const msg = (key%2 == 1)?studentIn:studentOut
 
-      })
+        /**
+         * Send SMS
+         */
+        gsmModem.sendSMS(cp, msg, false, (result) => {
+
+          if (result.data.response && result.data.response === 'Message Successfully Sent') {
+            (async () => {
+              await logSmsSuccess.send({
+                text: message,
+              });
+            })();
+            updateSent(con,aid)
+            ++i
+            if (i<size) {
+              smsNotify(results,i,size)
+            }
+          }
+    
+        });
+
+      }
 
     })
 
-  });
-})
+  }
 
-return
+  con.connect((err) => {
+    if (err) throw err;
+    console.log("Connected to database!");
+
+    const queryLogs = `SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE sms = 'queue' AND profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '${now}'`
+
+    con.query(queryLogs, (err, results) => {
+
+      if (err) throw err;
+
+      const size = results.length
+
+      if (size>0) {
+        smsNotify(results,i,size)
+      }
+
+    });
+  })
+
+}
+
+// init(con)
 
 const serialportgsm = require('serialport-gsm');
 const { IncomingWebhook } = require('@slack/webhook');
@@ -107,33 +156,6 @@ let phone = {
   number: "09179245040",
   numberSelf: "+639453749640",
   mode: "PDU"
-}
-
-const sendSMS = (gsmModem, number, message) => {
-
-    gsmModem.sendSMS(number, message, false, (result) => {
-
-      // console.log(`Callback Send: Message ID: ${result.data.messageId},` +
-      //     `${result.data.response} To: ${result.data.recipient} ${JSON.stringify(result)}`);
-
-      // (async () => {
-      //   await logSmsSuccess.send({
-      //     text: `Callback Send: Message ID: ${result.data.messageId},` +
-      //     `${result.data.response} To: ${result.data.recipient} ${JSON.stringify(result)}`,
-      //   });
-      // })();
-
-      if (result.data.response && result.data.response === 'Message Successfully Sent') {
-        (async () => {
-          await logSmsSuccess.send({
-            text: `SMS sent`,
-          });
-        })();
-        sendSMS(gsmModem, phone.number, 'Test SMS')
-      }
-
-    });
-
 }
 
 // Port is opened
@@ -180,7 +202,10 @@ gsmModem.on('open', () => {
             });
           })();
 
-          sendSMS(gsmModem, phone.number, 'Test SMS')
+          /**
+           * Init sending messages
+           */
+          init(con,gsmModem)
 
         }
       }, phone.mode);
@@ -253,7 +278,6 @@ gsmModem.on('open', () => {
 });
 
 // gsmModem.open('/dev/ttyUSB0', options);
-
 gsmModem.open(device, options);
 
 // setTimeout(() => {
