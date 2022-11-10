@@ -1,6 +1,8 @@
 require('dotenv').config();
+const moment = require('moment');
 
 const DB_PASSWORD = process.env.DB_PASSWORD
+const now = moment().format("YYYY-MM-DD")
 
 const mysql = require('mysql');
 
@@ -15,7 +17,7 @@ con.connect((err) => {
   if (err) throw err;
   console.log("Connected to database!");
 
-  const sql = `SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE sms = 'queue' AND profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '2022-10-28'`
+  const sql = `SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE sms = 'queue' AND profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '${now}'`
 
   con.query(sql, (err, result) => {
 
@@ -34,7 +36,17 @@ con.connect((err) => {
      * }
      */
     result.forEach((item,index) => {
+
+      const aid = item.id
+      // const cp = '09179245040'
+      const cp = item.cp
+      const rfid = req.body['rfid'];
+      const fullname = req.body['fullname'];
+      const log_date = req.body['log_date'];
+      const logQ_date = req.body['logQ_date'];
+      const log_time = req.body['log_time'];
       console.log(item.log_date)
+
     })
 
   });
