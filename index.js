@@ -46,6 +46,7 @@ const init = (con,gsmModem) => {
     const aid = item.id
     // const cp = item.cp
     const cp = '09179245040'
+    // const cp = '09172445929'
     const rfid = item.rfid
     const fullname = item.fullname
     const log_date = item.log_date
@@ -69,12 +70,20 @@ const init = (con,gsmModem) => {
         /**
          * Send SMS
          */
-        gsmModem.sendSMS(cp, msg, false, (result) => {
+        gsmModem.sendSMS(cp, `Lorem, Ipsum`, false, (result) => {
+
+          (async () => {
+            await logSmsSuccess.send({
+              // text: msg,
+              text: JSON.stringify(result),
+            });
+          })();
 
           if (result.data.response && result.data.response === 'Message Successfully Sent') {
             (async () => {
               await logSmsSuccess.send({
-                text: msg,
+                // text: msg,
+                text: JSON.stringify(result),
               });
             })();
             updateSent(con,aid)
@@ -96,7 +105,7 @@ const init = (con,gsmModem) => {
     if (err) throw err;
     console.log("Connected to database!");
 
-    const queryLogs = `SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE sms = 'queue' AND profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '${now}'`
+    const queryLogs = `SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '${now}' AND attendances.id = 500066` // AND sms = 'queue'`
 
     con.query(queryLogs, (err, results) => {
 
@@ -135,6 +144,7 @@ let options = {
   dataBits: 8,
   parity: 'none',
   stopBits: 1,
+  highWaterMark: 65536,
   xon: false,
   rtscts: false,
   xoff: false,
@@ -145,6 +155,7 @@ let options = {
   incomingSMSIndication: true,
   pin: '',
   customInitCommand: 'AT^CURC=0',
+  // cnmiCommand:'AT+CNMI=2,1,0,2,1',
   cnmiCommand:'AT+CNMI=2,1,0,2,1',
 
   logger: console
@@ -160,7 +171,12 @@ let phone = {
 
 // Port is opened
 gsmModem.on('open', () => {
-  console.log(`Modem Sucessfully Opened`);
+
+  (async () => {
+    await logDevice.send({
+      text: `Modem Sucessfully Opened`,
+    });
+  })();
 
   // now we initialize the GSM Modem
   gsmModem.initializeModem((msg, err) => {
@@ -168,16 +184,29 @@ gsmModem.on('open', () => {
       console.log(`Error Initializing Modem - ${err}`);
     } else {
 
-      console.log(`InitModemResponse: ${JSON.stringify(msg)}`);
+      (async () => {
+        await logDevice.send({
+          text: `InitModemResponse: ${JSON.stringify(msg)}`,
+        });
+      })();
 
-      console.log(`Configuring Modem for Mode: ${phone.mode}`);
+      (async () => {
+        await logDevice.send({
+          text: `Configuring Modem for Mode: ${phone.mode}`,
+        });
+      })();
+
       // set mode to PDU mode to handle SMS
       gsmModem.setModemMode((msg,err) => {
         if (err) {
           console.log(`Error Setting Modem Mode - ${err}`);
         } else {
 
-          console.log(`Set Mode: ${JSON.stringify(msg)}`);
+          (async () => {
+            await logDevice.send({
+              text: `Set Mode: ${JSON.stringify(msg)}`,
+            });
+          })();
 
           // get the Network signal strength
           gsmModem.getNetworkSignal((result, err) => {
@@ -201,6 +230,8 @@ gsmModem.on('open', () => {
               text: 'Ready to send SMS...',
             });
           })();
+
+          gsmModem.deleteAllSimMessages((result, err) => {})
 
           /**
            * Init sending messages
