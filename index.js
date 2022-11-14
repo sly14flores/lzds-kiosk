@@ -70,7 +70,7 @@ const init = (con,gsmModem) => {
         /**
          * Send SMS
          */
-        gsmModem.sendSMS(cp, `Lorem, Ipsum`, false, (result) => {
+        gsmModem.sendSMS(cp, msg, false, (result) => {
 
           (async () => {
             await logSmsSuccess.send({
@@ -122,8 +122,6 @@ const init = (con,gsmModem) => {
 
 }
 
-// init(con)
-
 const serialportgsm = require('serialport-gsm');
 const { IncomingWebhook } = require('@slack/webhook');
 
@@ -144,7 +142,7 @@ let options = {
   dataBits: 8,
   parity: 'none',
   stopBits: 1,
-  highWaterMark: 65536,
+  highWaterMark: 16384,
   xon: false,
   rtscts: false,
   xoff: false,
@@ -157,10 +155,8 @@ let options = {
   customInitCommand: 'AT^CURC=0',
   // cnmiCommand:'AT+CNMI=2,1,0,2,1',
   cnmiCommand:'AT+CNMI=2,1,0,2,1',
-
   logger: console
 }
-
 
 let phone = {
   name: "Sly Flores",
@@ -190,11 +186,11 @@ gsmModem.on('open', () => {
         });
       })();
 
-      (async () => {
-        await logDevice.send({
-          text: `Configuring Modem for Mode: ${phone.mode}`,
-        });
-      })();
+      // (async () => {
+      //   await logDevice.send({
+      //     text: `Configuring Modem for Mode: ${phone.mode}`,
+      //   });
+      // })();
 
       // set mode to PDU mode to handle SMS
       gsmModem.setModemMode((msg,err) => {
