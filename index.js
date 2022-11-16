@@ -45,7 +45,7 @@ const init = (con,gsmModem) => {
      */
     const aid = item.id
     // const cp = item.cp
-    const cp = '09179245040'
+    const cp = '+639179245040'
     // const cp = '09172445929'
     const rfid = item.rfid
     const fullname = item.fullname
@@ -70,6 +70,7 @@ const init = (con,gsmModem) => {
         /**
          * Send SMS
          */
+        const _msg = `FROM: Lord of Zion Divine School. Good day. Dear parent/guardian, Your child `
         gsmModem.sendSMS(cp, msg, false, (result) => {
 
           (async () => {
@@ -105,7 +106,7 @@ const init = (con,gsmModem) => {
     if (err) throw err;
     console.log("Connected to database!");
 
-    const queryLogs = `SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '${now}' AND attendances.id = 500066` // AND sms = 'queue'`
+    const queryLogs = `SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '${now}' AND attendances.id = 500841` // AND sms = 'queue'`
 
     con.query(queryLogs, (err, results) => {
 
@@ -152,7 +153,8 @@ let options = {
   incomingCallIndication: true,
   incomingSMSIndication: true,
   pin: '',
-  customInitCommand: 'AT^CURC=0',
+  // customInitCommand: 'AT^CURC=0',
+  customInitCommand: 'AT+CMGF=1',
   // cnmiCommand:'AT+CNMI=2,1,0,2,1',
   cnmiCommand:'AT+CNMI=2,1,0,2,1',
   logger: console
