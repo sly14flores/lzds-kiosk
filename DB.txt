@@ -1,3 +1,2 @@
-ALTER TABLE `profiles`  ADD `gender` VARCHAR(10) NOT NULL AFTER `middle_name`
-
-ALTER TABLE `profiles` CHANGE `gender` `gender` VARCHAR(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL
+ALTER TABLE `profiles` ADD `chat_id` VARCHAR(100) NULL AFTER `schedule_id`;
+ALTER TABLE `attendances` ADD `updated_at` TIMESTAMP NULL AFTER `log_order`;
