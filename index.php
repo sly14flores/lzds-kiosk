@@ -251,6 +251,42 @@
 					} else {
 					
 						setTimeout(screenSaver, 2000);
+
+						if (data==='Student') {
+
+							//
+							$.ajax({
+								url: 'telegram-message.php',
+								type: 'post',
+								data: {rfid: rfid},
+								success: function(data, status) {
+
+									if (data!=='Error fetching log') {
+
+										const response = JSON.parse(data)
+
+										if (response.chat_id !== null) {
+
+											$.ajax({
+												url: 'https://api.telegram.org/bot5910632478:AAFvQtx_zMPYzhJmOXKuQWlD6GLuHhOC_Tk/sendMessage',
+												type: 'post',
+												data: {
+													text: response.message,
+													chat_id: response.chat_id,
+												},
+												success: function(data, status) {
+
+												}
+											});
+
+										}
+
+									}
+
+								}
+							});
+
+						}
 						
 					}
 					
@@ -413,17 +449,17 @@
 		
 		}
 		
-		$scope.togCollect = function() {
+		// $scope.togCollect = function() {
 		
-			$scope.collectQueues = $interval(function() {
+		// 	$scope.collectQueues = $interval(function() {
 			
-				$scope.queues();
+		// 		$scope.queues();
 			
-			}, 60000);
+		// 	}, 60000);
 
-		}
+		// }
 		
-		$scope.togCollect();
+		// $scope.togCollect();
 	
 	});	
 	
