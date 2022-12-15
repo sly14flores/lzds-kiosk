@@ -14,7 +14,7 @@ require_once 'authentication.php';
     <meta name="author" content="">
     <link rel="icon" href="../favicon.ico">
 
-    <title>Attendance Monitoring System | Profiles</title>
+    <title>Attendance Monitoring System | About</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -47,38 +47,16 @@ require_once 'authentication.php';
 			border-radius: 3px;
 			padding-top: 25px;
 			padding-bottom: 25px;
-		}
-		
-		#crud-buttons {
-			border-bottom: 1px solid #e5e5e5;
-			padding: 0 15px 15px;
 		}		
 		
 		#page-content {
-			margin-top: 25px;
-		}
-		
-		input[type="checkbox"] {
-			vertical-align: middle;
-		}
-		
-		#frmProfile {
-			margin-left: 20px;
-		}
-		
-		#frmProfile img {
-			width: 50%;
-			margin-bottom: 10px;
-		}
-		
-		#proPic {
-			margin-bottom: 5px;
+			margin-top: 5px;
 		}
 	
 	</style>
   </head>
 
-  <body ng-app="appProfile"  ng-controller="appProfileCtrl">
+  <body ng-app="appTelegram" ng-controller="appTelegramCtrl">
 
 	<nav class="navbar navbar-default navbar-static-top">
       <div class="container">
@@ -103,18 +81,18 @@ require_once 'authentication.php';
           </ul>
         </div><!--/.nav-collapse -->
       </div>
-    </nav>
+    </nav>  
   
     <div class="container">
       <div class="header clearfix">
         <nav>
           <ul class="nav nav-pills pull-right">
-            <li role="presentation" class="active"><a href="index.php">Profiles</a></li>
-            <li role="presentation"><a href="dtr.php">DTR</a></li>
+            <li role="presentation"><a href="index.php">Profiles</a></li>
+            <li role="presentation"><a href="dtr.php">DTR</a></li>			
             <li role="presentation"><a href="console.php">Console</a></li>
-            <li role="presentation"><a href="preferences.php">Preferences</a></li>
-						<li role="presentation"><a href="telegram.php" target="_blank">Telegram</a></li>
-            <li role="presentation"><a href="about.php">About</a></li>			
+            <li role="presentation"><a href="preferences.php">Preferences</a></li>			
+            <li role="presentation" class="active"><a href="telegram.php">Telegram</a></li>			
+            <li role="presentation"><a href="about.php">About</a></li>		
           </ul>
         </nav>
         <!--<h3 class="text-muted">LZDS</h3>-->
@@ -124,25 +102,35 @@ require_once 'authentication.php';
 			<div class="col-lg-12">
 				<form id="crud-buttons" class="form-inline">
 					<div class="form-group">
-						<button type="button" class="btn btn-primary" ng-disabled="addBtn" ng-click="loadFormProfile()">New</button>
-						<button type="button" class="btn btn-primary" ng-disabled="editBtn" ng-click="editProfile()">Edit</button>
-						<button type="button" class="btn btn-primary" ng-disabled="delBtn" ng-click="confirmDelProfile()">Delete</button>
-						<label>School Year:</label>
-						<select class="form-control" ng-model="filter.profile_type" ng-options="pt.description for pt in view.profileTypes track by pt.name"></select>
-						<select class="form-control" ng-model="filter.sy" ng-options="sy.school_year for sy in school_years track by sy.id" ng-show="filter.profile_type.name == 'Student'"></select>
-						<button type="button" class="btn btn-primary" ng-click="profileList()">Go!</button>
-						<input type="text" class="form-control" ng-disabled="searchIn" ng-model="q" placeholder="Search">						
+						<button type="button" class="btn btn-primary" ng-click="profileList()">Refresh</button>
+						<input type="text" class="form-control" ng-model="q" placeholder="Search">						
 					</div>
 				</form>
 			</div>
-			<div id="page-content" class="col-lg-12" ng-include="activeTemplate"></div>			
+			<div id="page-content" class="col-lg-12" ng-include="activeTemplate"></div>	
 		</div>
       <footer class="footer">
         <p>&copy; 2016 AutoPilot</p>
       </footer>
 
     </div> <!-- /container -->
-
+	
+	<div id="dBox" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="label-dBox">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="label-dBox">Modal title</h4>
+		  </div>
+		  <div class="modal-body">
+			<p>One fine body&hellip;</p>
+		  </div>
+		  <div class="modal-footer">
+		  </div>
+		</div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->	
+	
 	<div id="confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="label-confirm">
 	  <div class="modal-dialog">
 		<div class="modal-content">
@@ -173,24 +161,17 @@ require_once 'authentication.php';
 		  </div>
 		</div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-	
-    <script src="angularjs/angular.min.js"></script>	
-    <script src="../jquery/jquery-2.2.4.min.js"></script>
-    <script src="../js/bootstrap.min.js"></script>	
+	</div><!-- /.modal -->	
 	
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../js/ie10-viewport-bug-workaround.js"></script>
 	
-    <script src="../jquery/jquery.blockUI.js"></script>	
-	
-	<script src="angularjs/utils/pagination/dirPagination.js"></script>
-	<script src="angularjs/utils/checklist-model.js"></script>
-	<script src="angularjs/utils/ui-bootstrap-tpls-1.3.3.min.js"></script>
+    <script src="angularjs/angular.min.js"></script>
+    <script src="../jquery/jquery-2.2.4.min.js"></script>
+    <script src="../jquery/jquery.blockUI.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
 	<script src="modules/bootstrap-modal.js"></script>
-	<script src="modules/account.js"></script>
-	<script src="modules/school-year.js"></script>
-	
-	<script src="controllers/appProfile.js"></script>	
+	<script src="modules/account.js"></script>	
+	<script src="controllers/appTelegram.js"></script>	
   </body>
 </html>

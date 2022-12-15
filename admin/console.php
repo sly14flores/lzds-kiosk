@@ -105,6 +105,7 @@ require_once 'authentication.php';
             <li role="presentation"><a href="dtr.php">DTR</a></li>				
             <li role="presentation" class="active"><a href="console.php">Console</a></li>
             <li role="presentation"><a href="preferences.php">Preferences</a></li>			
+						<li role="presentation"><a href="telegram.php">Telegram</a></li>	
             <li role="presentation"><a href="about.php">About</a></li>			
           </ul>
         </nav>

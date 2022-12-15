@@ -4,12 +4,12 @@
 	<table class="table table-striped">
 		<thead>
 			<tr>
-				<th><input type="checkbox" ng-click="selections()" ng-model="view.chkUnchk"></th><th>Type</th><th>RFID</th><th>School ID</th><th>Full Name</th><th>SY</th><th>Level</th><th>Section</th><th>Contact</th>
+				<th><input type="checkbox" ng-click="selections()" ng-model="view.chkUnchk"></th><th>Type</th><th>RFID</th><th>School ID</th><th>Full Name</th><th>SY</th><th>Level</th><th>Section</th><th>Chat Id</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr dir-paginate="result in results | filter: q | itemsPerPage: pageSize" current-page="currentPage">
-				<td><input type="checkbox" checklist-model="view.profiles.ids" checklist-value="result.id" ng-click="chkSelected()" ng-init="cacheId(result.id,currentPage)"></td><td>{{result.profile_type}}</td><td>{{result.rfid}}</td><td>{{result.school_id}}</td><td>{{result.full_name}}</td><td>{{result.school_year.school_year}}</td><td>{{result.level}}</td><td>{{result.section}}</td><td>{{result.cp}}</td>
+				<td><input type="checkbox" checklist-model="view.profiles.ids" checklist-value="result.id" ng-click="chkSelected()" ng-init="cacheId(result.id,currentPage)"></td><td>{{result.profile_type}}</td><td>{{result.rfid}}</td><td>{{result.school_id}}</td><td>{{result.full_name}}</td><td>{{result.school_year.school_year}}</td><td>{{result.level}}</td><td>{{result.section}}</td><td>{{result.chat_id}}</td>
 			</tr>
 		</tbody>
 	</table>
