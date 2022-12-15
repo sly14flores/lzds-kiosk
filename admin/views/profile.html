@@ -135,6 +135,12 @@
 						<input type="text" class="form-control" name="schedule" ng-model="profile.schedule">
 					  </div>		
 					</div>
+					<div class="col-lg-4" ng-show="profile.profile_type != undefined && profile.profile_type == 'Student'">
+					  <div class="form-group">
+							<label>Telegram Chat ID</label>
+							<input type="text" class="form-control" name="chat_id" ng-model="profile.chat_id">
+					  </div>				
+					</div>
 				</div>
 				<div class="row">
 					<div class="col-lg-12">
