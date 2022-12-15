@@ -107,7 +107,7 @@ require_once 'authentication.php';
 					</div>
 				</form>
 			</div>
-			<div id="page-content" class="col-lg-12" ng-include="activeTemplate"></div>	
+			<div style="margin-top: 15px" id="page-content" class="col-lg-12" ng-include="activeTemplate"></div>	
 		</div>
       <footer class="footer">
         <p>&copy; 2016 AutoPilot</p>
