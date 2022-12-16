@@ -102,7 +102,7 @@ require_once 'authentication.php';
 			<div class="col-lg-12">
 				<form id="crud-buttons" class="form-inline">
 					<div class="form-group">
-						<button type="button" class="btn btn-primary" ng-click="profileList()">Refresh</button>
+						<button type="button" class="btn btn-primary" ng-click="refresh()">Refresh</button>
 						<input type="text" class="form-control" ng-model="q" placeholder="Search">						
 					</div>
 				</form>
