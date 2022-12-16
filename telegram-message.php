@@ -3,7 +3,7 @@
 require_once 'db.php';
 $con = new pdo_db();
 
-$rfid = $_POST['rfid'];
+$rfid = substr($_POST['rfid'],0,10);
 
 $now = date('Y-m-d');
 
@@ -17,16 +17,17 @@ if (($con->rows)>0) {
 
   $studentIn = "FROM: Lord of Zion Divine School. Good day. Dear parent/guardian, Your child ".$log[0]['fullname']." has entered the school premises on ".$log[0]['log_date']." at ".$log[0]['log_time'].". Wishing you a great day ahead. Thank you.";
   $studentOut = "FROM: Lord of Zion Divine School. Great day. Dear parent/guardian, Your child ".$log[0]['fullname']." has left the campus on ".$log[0]['log_date']." at ".$log[0]['log_time'].". Enjoy the rest of the day. God bless.";
-
-  if (date("H") < 12) {
-    $message = $studentIn;
+  
+  if ( (count($log)%2) == 1) {
+	$message = $studentIn;
   } else {
-    $message = $studentOut;
+	$message = $studentOut;  
   }
 
   $log[0]['message'] = $message;
 
   echo json_encode($log[0]);
+  
   exit();
 }
 
