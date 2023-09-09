@@ -13,20 +13,20 @@ $log = $con->getData($sql);
 
 if (($con->rows)>0) {
 
-  $message = "";
-
-  $studentIn = "FROM: Lord of Zion Divine School. Good day. Dear parent/guardian, Your child ".$log[0]['fullname']." has entered the school premises on ".$log[0]['log_date']." at ".$log[0]['log_time'].". Wishing you a great day ahead. Thank you.";
-  $studentOut = "FROM: Lord of Zion Divine School. Great day. Dear parent/guardian, Your child ".$log[0]['fullname']." has left the campus on ".$log[0]['log_date']." at ".$log[0]['log_time'].". Enjoy the rest of the day. God bless.";
+  $_log = [];
   
-  if ( (count($log)%2) == 1) {
-	$message = $studentIn;
-  } else {
-	$message = $studentOut;  
+  $i = count($log);
+  if ( ($i%2) == 1) { // In
+    $message = "FROM: Lord of Zion Divine School. Good day. Dear parent/guardian, Your child ".$log[0]['fullname']." has entered the school premises on ".$log[0]['log_date']." at ".$log[0]['log_time'].". Wishing you a great day ahead. Thank you.";
+    $log[0]['message'] = $message;
+    $_log = $log[0];
+  } else { // Out
+    $message = "FROM: Lord of Zion Divine School. Great day. Dear parent/guardian, Your child ".$log[$i-1]['fullname']." has left the campus on ".$log[$i-1]['log_date']." at ".$log[$i-1]['log_time'].". Enjoy the rest of the day. God bless.";
+    $log[$i-1]['message'] = $message;
+    $_log = $log[$i-1];
   }
 
-  $log[0]['message'] = $message;
-
-  echo json_encode($log[0]);
+  echo json_encode($_log);
   
   exit();
 }
