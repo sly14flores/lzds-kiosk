@@ -22,8 +22,8 @@ if (($con->rows)>0) {
     $_log = $log[0];
   } else { // Out
     $message = "FROM: Lord of Zion Divine School. Great day. Dear parent/guardian, Your child ".$log[$i-1]['fullname']." has left the campus on ".$log[$i-1]['log_date']." at ".$log[$i-1]['log_time'].". Enjoy the rest of the day. God bless.";
-    $log[$i-1]['message'] = $message;
-    $_log = $log[$i-1];
+    $log[0]['message'] = $message;
+    $_log = $log[0];
   }
 
   echo json_encode($_log);
