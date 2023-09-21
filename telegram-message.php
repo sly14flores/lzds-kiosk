@@ -7,7 +7,7 @@ $rfid = substr($_POST['rfid'],0,10);
 
 $now = date('Y-m-d');
 
-$sql = "SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date, profiles.chat_id FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '{$now}' AND attendances.rfid = '{$rfid}' ORDER BY log_time DESC";
+$sql = "SELECT attendances.id, attendances.rfid, CONCAT(profiles.first_name, ' ', SUBSTRING(profiles.middle_name,1,1), '. ', profiles.last_name) fullname, attendances.time_log, profiles.cp, DATE_FORMAT(attendances.time_log, '%a, %b %e, %Y') log_date, DATE_FORMAT(attendances.time_log, '%h:%i %p') log_time, DATE_FORMAT(attendances.time_log, '%Y-%m-%d') logQ_date, profiles.chat_id FROM attendances LEFT JOIN profiles ON attendances.rfid = profiles.rfid WHERE profiles.profile_type = 'Student' AND SUBSTRING(time_log,1,10) = '{$now}' AND attendances.rfid = '{$rfid}' ORDER BY time_log DESC";
 
 $log = $con->getData($sql);
 
