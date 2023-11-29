@@ -1,6 +1,6 @@
 <div class="panel panel-default">
   <div class="panel-heading">Profiles</div>
-  <div class="panel-body">				  
+  <div class="panel-body">		  
 	<table class="table table-striped">
 		<thead>
 			<tr>
@@ -15,3 +15,35 @@
 	</table>
   </div>
 </div>
+<form name="frmHolder.frmAnnounce" id="frmHolder.frmAnnounce" novalidate autocomplete=off>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="form-group" ng-class="{'has-error': frmHolder.frmAnnounce.content.$invalid && frmHolder.frmAnnounce.content.$touched}">
+				<label>Announcement</label>
+				<textarea class="form-control" name="content" id="content" ng-model="announcement.content" required></textarea>
+				<div class="alert alert-danger" role="alert" ng-show="frmHolder.frmAnnounce.content.$invalid && frmHolder.frmAnnounce.content.$touched" style="margin-top: 5px;">Please enter announcement</div>
+			</div>		
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-4">
+			<div class="form-group">
+			  <label>Chat ID</label>
+			  <input type="text" class="form-control" name="chat_id" ng-model="announcement.chat_id">
+			  <div class="alert alert-danger" role="alert" ng-show="validation.chat_id_invalid" style="margin-top: 5px;">Please enter Chat ID</div>
+			</div>				
+		</div>
+		<div class="col-lg-8">
+		  <div class="form-group" style="padding-top: 25px">
+			  <button type="button" class="btn btn-primary" ng-click="sendTest()">Send (Test)</button>
+		  </div>				
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-12">
+		  <div class="form-group pull-right">
+			  <button type="button" class="btn btn-primary" ng-click="confirmSend()">Send To All</button>
+		  </div>				
+		</div>
+	</div>
+</form>
