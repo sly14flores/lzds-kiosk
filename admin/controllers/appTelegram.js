@@ -79,6 +79,7 @@ app.controller('appTelegramCtrl', function($scope, $http, bootstrapModal) {
 		}, function myError(response) {
 			 
 		  // error
+      uUI();
 			
 		});	
 
